@@ -10,4 +10,3 @@
 extra features.
 putting certain certain threshold values which will auto trigger the app to call ambulance with a prior notification also we will show bp and spo2 in home screen 
 we can also put feature like medice tracking like provide a section where he or she can input his or her medicine and time to take medicine which app will remind on time also it will keep track on medicine like is medicine will be over in 2 days please buy notification . also we can colloborate with other apps to auto order medicine a day before.
-
