@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'add_medicine.dart';
 
 class MedicineTrackerScreen extends StatefulWidget {
   const MedicineTrackerScreen({Key? key}) : super(key: key);
@@ -70,10 +71,11 @@ class _MedicineTrackerScreenState extends State<MedicineTrackerScreen> {
             Center(
               child: ElevatedButton.icon(
                 onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => AddMedicineScreen()),
+                   );
                   // Future functionality for adding medicines
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Add Medicine feature coming soon!")),
-                  );
                 },
                 icon: const Icon(Icons.add),
                 label: const Text("Add Medicine"),
