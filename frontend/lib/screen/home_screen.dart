@@ -4,6 +4,7 @@ import '../services/auth_service.dart';
 import 'patient_history_screen.dart';
 import 'chatbot_screen.dart';
 import 'medicine_tracking_screen.dart';
+import 'profile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -37,6 +38,12 @@ class _HomeScreenState extends State<HomeScreen> {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const MedicineTrackingScreen()),
+        );
+        break;
+      case 3:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const ProfileScreen()),
         );
         break;
     }
@@ -93,31 +100,6 @@ class _HomeScreenState extends State<HomeScreen> {
               // Handle notifications
             },
           ),
-          IconButton(
-            icon: const Icon(Icons.logout, color: Colors.black),
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: const Text('Logout'),
-                  content: const Text('Are you sure you want to logout?'),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text('Cancel'),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        authService.logout();
-                        Navigator.pushReplacementNamed(context, '/');
-                      },
-                      child: const Text('Logout', style: TextStyle(color: Colors.red)),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
         ],
       ),
       body: SingleChildScrollView(
@@ -143,9 +125,10 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
+        bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
+        type: BottomNavigationBarType.fixed,
         selectedItemColor: const Color(0xFF4CAF50),
         items: const [
           BottomNavigationBarItem(
@@ -154,11 +137,15 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.history),
-            label: 'Patient History',
+            label: 'History',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.medication),
             label: 'Medicines',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
           ),
         ],
       ),

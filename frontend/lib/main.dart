@@ -13,7 +13,8 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => AuthService()), // Added Provider for authentication
+        ChangeNotifierProvider(create: (_) => AuthService()),
+         // Added Provider for authentication
       ],
       child: const DoctApp(),
     ),

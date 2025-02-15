@@ -1,10 +1,11 @@
 // lib/services/patient_service.dart
 import 'dart:convert';
+import 'package:healthcareapp/utils/constant.dart';
 import 'package:http/http.dart' as http;
 import '../models/patient_model.dart';
 
 class PatientService {
-  final String baseUrl = 'http://localhost:5000/api/patients';
+  final String baseUrl = Constant.baseUrl + 'patients';
 
   Future<Map<String, dynamic>> createPatient(Map<String, dynamic> patientData) async {
     try {

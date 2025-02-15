@@ -65,43 +65,55 @@ class _SignupScreenState extends State<SignupScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.favorite, color: Color(0xFF4CAF50), size: 80),
-                const SizedBox(height: 20),
-                const Text(
-                  'Create Account',
-                  style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+        child: GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: MediaQuery.of(context).size.height - 
+                          MediaQuery.of(context).padding.top - 
+                          MediaQuery.of(context).padding.bottom,
+              ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.favorite, color: Color(0xFF4CAF50), size: 80),
+                            const SizedBox(height: 20),
+                            const Text(
+                              'Create Account',
+                                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                            ),
+                              const SizedBox(height: 40),
+                              _buildTextField(_nameController, "Full Name", false),
+                              const SizedBox(height: 20),
+                              _buildTextField(_emailController, "Email", false, emailValidation: true),
+                              const SizedBox(height: 20),
+                              _buildTextField(_phoneController, "Phone Number", false),
+                              const SizedBox(height: 20),
+                              _buildTextField(_passwordController, "Password", true, passwordValidation: true),
+                              const SizedBox(height: 20),
+                              _buildTextField(_confirmPasswordController, "Confirm Password", true, confirmPassword: true),
+                              const SizedBox(height: 30),
+                              _isLoading
+                              ? const CircularProgressIndicator()
+                              : ElevatedButton(
+                                  onPressed: _signup,
+                                  style: _buttonStyle(),
+                                  child: const Text('Sign Up', style: TextStyle(fontSize: 18)),
+                                ),
+                                const SizedBox(height: 20),
+                              TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: const Text('Already have an account? Sign In'),
+                              ),
+                          ],
+                        ),
+                    ),
                 ),
-                const SizedBox(height: 40),
-                _buildTextField(_nameController, "Full Name", false),
-                const SizedBox(height: 20),
-                _buildTextField(_emailController, "Email", false, emailValidation: true),
-                const SizedBox(height: 20),
-                _buildTextField(_phoneController, "Phone Number", false),
-                const SizedBox(height: 20),
-                _buildTextField(_passwordController, "Password", true, passwordValidation: true),
-                const SizedBox(height: 20),
-                _buildTextField(_confirmPasswordController, "Confirm Password", true, confirmPassword: true),
-                const SizedBox(height: 30),
-                _isLoading
-                    ? const CircularProgressIndicator()
-                    : ElevatedButton(
-                        onPressed: _signup,
-                        style: _buttonStyle(),
-                        child: const Text('Sign Up', style: TextStyle(fontSize: 18)),
-                      ),
-                const SizedBox(height: 20),
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('Already have an account? Sign In'),
-                ),
-              ],
             ),
           ),
         ),
