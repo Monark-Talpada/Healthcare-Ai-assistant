@@ -83,19 +83,19 @@ class User {
 }
 
 class EmergencyContact {
-  final String id;
+  
   final String relation;
   final String number;
 
   EmergencyContact({
-    required this.id,
+    
     required this.relation,
     required this.number,
   });
 
   factory EmergencyContact.fromJson(Map<String, dynamic> json) {
     return EmergencyContact(
-      id: json['id'],
+      
       relation: json['relation'],
       number: json['number'],
     );
@@ -103,7 +103,7 @@ class EmergencyContact {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
+      
       'relation': relation,
       'number': number,
     };
@@ -114,7 +114,7 @@ class EmergencyContact {
     String? number,
   }) {
     return EmergencyContact(
-      id: id,
+     
       relation: relation ?? this.relation,
       number: number ?? this.number,
     );
