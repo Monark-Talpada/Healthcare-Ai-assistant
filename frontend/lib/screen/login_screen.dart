@@ -12,15 +12,27 @@ class LoginScreen extends StatefulWidget {
   _LoginScreenState createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _passwordVisible = false;
   bool _isLoading = false;
+  late AnimationController _animationController;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
+    _animationController.forward();
+  }
 
   @override
   void dispose() {
+    _animationController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -29,9 +41,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void _login() async {
     if (!_formKey.currentState!.validate()) return;
 
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() => _isLoading = true);
 
     final authService = Provider.of<AuthService>(context, listen: false);
     final result = await authService.login(
@@ -39,11 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
       _passwordController.text,
     );
 
-    setState(() {
-      _isLoading = false;
-    });
-
-    print(result);
+    setState(() => _isLoading = false);
 
     if (result == "success") {
       Navigator.pushReplacement(
@@ -58,82 +64,130 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   @override
-Widget build(BuildContext context) {
+  Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: GestureDetector(
-          onTap: () => FocusScope.of(context).unfocus(),
-          child: SingleChildScrollView(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: MediaQuery.of(context).size.height - 
-                                MediaQuery.of(context).padding.top - 
-                                MediaQuery.of(context).padding.bottom,
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(Icons.favorite, color: Color(0xFF4CAF50), size: 80),
-                            const SizedBox(height: 20),
-                            const Text(
-                              'DoctApp',
-                              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(height: 40),
-                            _buildTextField(_emailController, "Email", false, emailValidation: true),
-                            const SizedBox(height: 20),
-                            _buildTextField(_passwordController, "Password", true, passwordValidation: true),
-                            const SizedBox(height: 10),
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: TextButton(
-                                onPressed: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => const ForgotPasswordScreen()),
-                                ),
-                                child: const Text('Forgot Password?'),
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-                            _isLoading
-                                ? const CircularProgressIndicator()
-                                : ElevatedButton(
-                                    onPressed: _login,
-                                    style: _buttonStyle(),
-                                    child: const Text('Sign In', style: TextStyle(fontSize: 18)),
-                                  ),
-                            const SizedBox(height: 20),
-                              ElevatedButton(
-                                onPressed: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => const SignupScreen()),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.white,
-                                  minimumSize: const Size(double.infinity, 50),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                    side: const BorderSide(color: Color(0xFF4CAF50)),
-                                  ),
-                                ),
-                                child: const Text(
-                                  'Create Account',
-                                  style: TextStyle(fontSize: 18, color: Color(0xFF4CAF50)),
-                                ),
-                            ),
-                          ],
-                       ),
+      backgroundColor: Colors.white,
+      body: FadeTransition(
+        opacity: _animationController,
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      height: MediaQuery.of(context).size.height * 0.3,
+                      child: Image(
+                        image: const AssetImage('assets/logingraphics.jpg'),
+                        fit: BoxFit.contain,
                       ),
                     ),
                   ),
+                  const SizedBox(height: 20),
+                  const Text(
+                    'Sign In',
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Welcome back! Please enter your details.',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.black54,
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                  Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        _buildTextField(_emailController, "Email", false, emailValidation: true),
+                        const SizedBox(height: 20),
+                        _buildTextField(_passwordController, "Password", true, passwordValidation: true),
+                      ],
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const ForgotPasswordScreen()),
+                      ),
+                      child: const Text(
+                        'Forgot Password?',
+                        style: TextStyle(color: Colors.blueAccent),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  _isLoading
+                      ? const Center(child: CircularProgressIndicator())
+                      : SizedBox(
+                          width: double.infinity,
+                          height: 50,
+                          child: ElevatedButton(
+                            onPressed: _login,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blueAccent,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              elevation: 4, // Subtle shadow for elevation
+                            ),
+                            child: const Text('Sign In', style: TextStyle(fontSize: 18, color: Colors.white)),
+                          ),
+                        ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text("Don't have an account? ", style: TextStyle(color: Colors.black54)),
+                      GestureDetector(
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const SignupScreen()),
+                        ),
+                        child: const Text(
+                          'Sign Up',
+                          style: TextStyle(color: Colors.blueAccent, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 30),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        onPressed: () {},
+                        icon: const Icon(Icons.facebook, color: Colors.blue),
+                        iconSize: 36,
+                      ),
+                      IconButton(
+                        onPressed: () {},
+                        icon: const Icon(Icons.g_mobiledata, color: Colors.red),
+                        iconSize: 36,
+                      ),
+                      IconButton(
+                        onPressed: () {},
+                        icon: const Icon(Icons.apple, color: Colors.black),
+                        iconSize: 36,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
       ),
-      resizeToAvoidBottomInset: true,
     );
   }
 
@@ -143,11 +197,16 @@ Widget build(BuildContext context) {
       controller: controller,
       obscureText: isPassword ? !_passwordVisible : false,
       decoration: InputDecoration(
-        hintText: hintText,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+        labelText: hintText,
+        labelStyle: const TextStyle(color: Colors.black54),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        focusedBorder: OutlineInputBorder(
+          borderSide: const BorderSide(color: Color.fromRGBO(68, 138, 255, 1), width: 2),
+          borderRadius: BorderRadius.circular(12),
+        ),
         suffixIcon: isPassword
             ? IconButton(
-                icon: Icon(_passwordVisible ? Icons.visibility : Icons.visibility_off),
+                icon: Icon(_passwordVisible ? Icons.visibility : Icons.visibility_off, color: Colors.black54),
                 onPressed: () => setState(() => _passwordVisible = !_passwordVisible),
               )
             : null,
@@ -165,14 +224,6 @@ Widget build(BuildContext context) {
 
         return null;
       },
-    );
-  }
-
-  ButtonStyle _buttonStyle() {
-    return ElevatedButton.styleFrom(
-      backgroundColor: const Color(0xFF4CAF50),
-      minimumSize: const Size(double.infinity, 50),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
     );
   }
 }

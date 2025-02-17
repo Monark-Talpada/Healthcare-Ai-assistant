@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../services/auth_service.dart';
 import 'home_screen.dart';
 
+const double inputFieldHeight = 50.0;
 class SignupScreen extends StatefulWidget {
   const SignupScreen({Key? key}) : super(key: key);
 
@@ -33,9 +34,7 @@ class _SignupScreenState extends State<SignupScreen> {
   void _signup() async {
     if (!_formKey.currentState!.validate()) return;
 
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() => _isLoading = true);
 
     final authService = Provider.of<AuthService>(context, listen: false);
     final result = await authService.signup(
@@ -45,9 +44,7 @@ class _SignupScreenState extends State<SignupScreen> {
       _passwordController.text,
     );
 
-    setState(() {
-      _isLoading = false;
-    });
+    setState(() => _isLoading = false);
 
     if (result == "success") {
       Navigator.pushReplacement(
@@ -70,50 +67,78 @@ class _SignupScreenState extends State<SignupScreen> {
           child: SingleChildScrollView(
             child: ConstrainedBox(
               constraints: BoxConstraints(
-                minHeight: MediaQuery.of(context).size.height - 
-                          MediaQuery.of(context).padding.top - 
-                          MediaQuery.of(context).padding.bottom,
+                minHeight: MediaQuery.of(context).size.height -
+                    MediaQuery.of(context).padding.top -
+                    MediaQuery.of(context).padding.bottom,
               ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(Icons.favorite, color: Color(0xFF4CAF50), size: 80),
-                            const SizedBox(height: 20),
-                            const Text(
-                              'Create Account',
-                                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-                            ),
-                              const SizedBox(height: 40),
-                              _buildTextField(_nameController, "Full Name", false),
-                              const SizedBox(height: 20),
-                              _buildTextField(_emailController, "Email", false, emailValidation: true),
-                              const SizedBox(height: 20),
-                              _buildTextField(_phoneController, "Phone Number", false),
-                              const SizedBox(height: 20),
-                              _buildTextField(_passwordController, "Password", true, passwordValidation: true),
-                              const SizedBox(height: 20),
-                              _buildTextField(_confirmPasswordController, "Confirm Password", true, confirmPassword: true),
-                              const SizedBox(height: 30),
-                              _isLoading
-                              ? const CircularProgressIndicator()
-                              : ElevatedButton(
-                                  onPressed: _signup,
-                                  style: _buttonStyle(),
-                                  child: const Text('Sign Up', style: TextStyle(fontSize: 18)),
-                                ),
-                                const SizedBox(height: 20),
-                              TextButton(
-                                onPressed: () => Navigator.pop(context),
-                                child: const Text('Already have an account? Sign In'),
-                              ),
-                          ],
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const SizedBox(height: 50),
+                      const Text(
+                        'Sign Up',
+                        style: TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
                         ),
-                    ),
+                      ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        'Create an account to get started.',
+                        style: TextStyle(fontSize: 16, color: Colors.black54),
+                      ),
+                      const SizedBox(height: 20),
+                      _buildTextField(_nameController, "Full Name", false),
+                      const SizedBox(height: 16),
+                      _buildTextField(_emailController, "Email", false, emailValidation: true),
+                      const SizedBox(height: 16),
+                      _buildTextField(_phoneController, "Phone Number", false),
+                      const SizedBox(height: 16),
+                      _buildTextField(_passwordController, "Password", true, passwordValidation: true),
+                      const SizedBox(height: 16),
+                      _buildTextField(_confirmPasswordController, "Confirm Password", true, confirmPassword: true),
+                      const SizedBox(height: 24),
+                      _isLoading
+                          ? const CircularProgressIndicator()
+                          : SizedBox(
+                              width: double.infinity,
+                          height: 50,
+                              child: ElevatedButton(
+                                onPressed: _signup,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.blueAccent,
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                  elevation: 4,
+                                ),
+                                child: const Text(
+                                  'Sign Up',
+                                  style: TextStyle(fontSize: 18, color: Colors.white),
+                                ),
+                              ),
+                            ),
+                      const SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          _socialButton(Icons.facebook, "Facebook", Colors.blue),
+                          _socialButton(Icons.g_mobiledata, "Google", Colors.red),
+                          _socialButton(Icons.apple, "Apple", Colors.black),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text('Already have an account? Sign In'),
+                      ),
+                    ],
+                  ),
                 ),
+              ),
             ),
           ),
         ),
@@ -121,46 +146,61 @@ class _SignupScreenState extends State<SignupScreen> {
     );
   }
 
-  Widget _buildTextField(TextEditingController controller, String hintText, bool isPassword,
-      {bool emailValidation = false, bool passwordValidation = false, bool confirmPassword = false}) {
-    return TextFormField(
-      controller: controller,
-      obscureText: isPassword ? !_passwordVisible : false,
-      decoration: InputDecoration(
-        hintText: hintText,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-        suffixIcon: isPassword
-            ? IconButton(
-                icon: Icon(_passwordVisible ? Icons.visibility : Icons.visibility_off),
-                onPressed: () => setState(() => _passwordVisible = !_passwordVisible),
-              )
-            : null,
+ Widget _buildTextField(
+  TextEditingController controller, String hintText, bool isPassword,
+  {bool emailValidation = false, bool passwordValidation = false, bool confirmPassword = false}) {
+    return Container(
+      height: inputFieldHeight, // Set the same height here
+      child: TextFormField(
+        controller: controller,
+        obscureText: isPassword ? !_passwordVisible : false,
+        decoration: InputDecoration(
+          labelText: hintText,
+          labelStyle: const TextStyle(color: Colors.black54),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          focusedBorder: OutlineInputBorder(
+            borderSide: const BorderSide(color: Color.fromRGBO(68, 138, 255, 1), width: 2),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          suffixIcon: isPassword
+              ? IconButton(
+                  icon: Icon(_passwordVisible ? Icons.visibility : Icons.visibility_off, color: Colors.black54),
+                  onPressed: () => setState(() => _passwordVisible = !_passwordVisible),
+                )
+              : null,
+        ),
+        validator: (value) {
+          if (value == null || value.isEmpty) return "This field cannot be empty";
+
+          if (emailValidation && !RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+            return "Enter a valid email";
+          }
+
+          if (passwordValidation && value.length < 8) {
+            return "Password must be at least 8 characters";
+          }
+
+          if (confirmPassword && value != _passwordController.text) {
+            return "Passwords do not match";
+          }
+
+          return null;
+        },
       ),
-      validator: (value) {
-        if (value == null || value.isEmpty) return "This field cannot be empty";
-
-        if (emailValidation && !RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
-          return "Enter a valid email";
-        }
-
-        if (passwordValidation && !RegExp(r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$').hasMatch(value)) {
-          return "Password must be at least 8 characters, include a number";
-        }
-
-        if (confirmPassword && value != _passwordController.text) {
-          return "Passwords do not match";
-        }
-
-        return null;
-      },
     );
   }
 
-  ButtonStyle _buttonStyle() {
-    return ElevatedButton.styleFrom(
-      backgroundColor: const Color(0xFF4CAF50),
-      minimumSize: const Size(double.infinity, 50),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+
+  Widget _socialButton(IconData icon, String label, Color color) {
+    return ElevatedButton.icon(
+      onPressed: () {},
+      icon: Icon(icon, color: Colors.white),
+      label: Text(label, style: const TextStyle(color: Colors.white)),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: color,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        minimumSize: const Size(100, 40),
+      ),
     );
   }
 }
