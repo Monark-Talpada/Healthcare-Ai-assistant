@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../models/medicine.dart';
 import '../services/medicine_service.dart';
+import '../services/auth_service.dart';
+import 'package:provider/provider.dart';
 
 class MedicineTrackingScreen extends StatefulWidget {
   const MedicineTrackingScreen({Key? key}) : super(key: key);
@@ -10,13 +12,15 @@ class MedicineTrackingScreen extends StatefulWidget {
 }
 
 class _MedicineTrackingScreenState extends State<MedicineTrackingScreen> {
-  final MedicineService _medicineService = MedicineService();
+  late final MedicineService _medicineService;
   List<Medicine> _medicines = [];
   bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
+    final authService = Provider.of<AuthService>(context, listen: false);
+    _medicineService = MedicineService(authToken: authService.currentUser?.token);
     _loadMedicines();
   }
 
