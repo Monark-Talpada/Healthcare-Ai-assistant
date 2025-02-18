@@ -35,7 +35,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       genderController.text = user.gender ?? '';
       bloodTypeController.text = user.bloodType ?? '';
       weightController.text = user.weight?.toString() ?? '';
-      // Convert emergency contacts to List<Map<String, String>>
       emergencyContacts = user.emergencyContacts.map((contact) => {
         "number": contact.number,
         "relation": contact.relation,
@@ -55,21 +54,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              TextField(
-                controller: numberController,
-                decoration: const InputDecoration(
-                  labelText: "Phone Number",
-                  border: OutlineInputBorder(),
-                ),
-              ),
+              _buildTextField(numberController, "Phone Number"),
               const SizedBox(height: 10),
-              TextField(
-                controller: relationController,
-                decoration: const InputDecoration(
-                  labelText: "Relation",
-                  border: OutlineInputBorder(),
-                ),
-              ),
+              _buildTextField(relationController, "Relation"),
             ],
           ),
           actions: [
@@ -94,97 +81,63 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Future<void> _saveChanges() async {
-  setState(() {
-    isLoading = true;
-  });
-
-  final authService = Provider.of<AuthService>(context, listen: false);
-  
-  try {
-    // Validate input data
-    if (nameController.text.isEmpty || phoneController.text.isEmpty) {
-      throw Exception("Name and phone number are required");
-    }
-
-    // Validate age format if provided
-    if (ageController.text.isNotEmpty) {
-      final age = int.tryParse(ageController.text);
-      if (age == null || age < 0 || age > 150) {
-        throw Exception("Invalid age value");
+    setState(() { isLoading = true; });
+    final authService = Provider.of<AuthService>(context, listen: false);
+    try {
+      if (nameController.text.isEmpty || phoneController.text.isEmpty) {
+        throw Exception("Name and phone number are required");
       }
-    }
 
-    // Validate weight format if provided
-    if (weightController.text.isNotEmpty) {
-      final weight = double.tryParse(weightController.text);
-      if (weight == null || weight < 0 || weight > 500) {
-        throw Exception("Invalid weight value");
-      }
-    }
-
-    final result = await authService.updateProfile(
-      name: nameController.text,
-      phone: phoneController.text,
-      gender: genderController.text.isNotEmpty ? genderController.text : null,
-      age: ageController.text.isNotEmpty ? int.tryParse(ageController.text) : null,
-      bloodType: bloodTypeController.text.isNotEmpty ? bloodTypeController.text : null,
-      weight: weightController.text.isNotEmpty ? double.tryParse(weightController.text) : null,
-      emergencyContacts: emergencyContacts.isNotEmpty ? emergencyContacts : null,
-    );
-
-    if (result == "success") {
-      if (mounted) {
-        // Refresh user data after successful update
-        await authService.refreshUserData();
-        
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Profile updated successfully')),
-        );
-        Navigator.pop(context);
-      }
-    } else {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: $result'),
-            backgroundColor: Colors.red,
-            duration: const Duration(seconds: 5),
-          ),
-        );
-      }
-    }
-  } catch (e) {
-    if (mounted) {
-      print('Error in _saveChanges: $e'); // Add debug print
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error: ${e.toString()}'),
-          backgroundColor: Colors.red,
-          duration: const Duration(seconds: 5),
-        ),
+      final result = await authService.updateProfile(
+        name: nameController.text,
+        phone: phoneController.text,
+        gender: genderController.text,
+        age: int.tryParse(ageController.text),
+        bloodType: bloodTypeController.text,
+        weight: double.tryParse(weightController.text),
+        emergencyContacts: emergencyContacts,
       );
-    }
-  } finally {
-    if (mounted) {
-      setState(() {
-        isLoading = false;
-      });
+
+      if (result == "success") {
+        if (mounted) {
+          await authService.refreshUserData();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Profile updated successfully')),
+          );
+          Navigator.pop(context);
+        }
+      } else {
+        _showError(result);
+      }
+    } catch (e) {
+      _showError(e.toString());
+    } finally {
+      if (mounted) {
+        setState(() { isLoading = false; });
+      }
     }
   }
-}
 
-  // Rest of the code remains the same...
+  void _showError(String message) {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $message'), backgroundColor: Colors.red),
+      );
+    }
+  }
 
   Widget _buildTextField(TextEditingController controller, String label) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: TextField(
         controller: controller,
         decoration: InputDecoration(
           labelText: label,
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(12),
           ),
+          filled: true,
+          fillColor: Colors.grey[200],
           contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
         ),
       ),
@@ -197,9 +150,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       appBar: AppBar(
         title: const Text("Edit Profile"),
         backgroundColor: Colors.blueAccent,
+        centerTitle: true,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(16),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -212,11 +166,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               _buildTextField(weightController, "Weight"),
               
               const SizedBox(height: 20),
-
-              const Text(
-                "Emergency Contacts",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
+              const Text("Emergency Contacts", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               const SizedBox(height: 10),
 
               Wrap(
@@ -230,30 +180,23 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
               
               const SizedBox(height: 10),
-
-              Align(
-                alignment: Alignment.centerLeft,
-                child: ElevatedButton.icon(
-                  onPressed: _addEmergencyContact,
-                  icon: const Icon(Icons.add),
-                  label: const Text("Add Contact"),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueAccent,
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                  ),
+              ElevatedButton.icon(
+                onPressed: _addEmergencyContact,
+                icon: const Icon(Icons.add),
+                label: const Text("Add Contact"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blueAccent,
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                 ),
               ),
               
               const SizedBox(height: 30),
-
               ElevatedButton(
                 onPressed: isLoading ? null : _saveChanges,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
                   minimumSize: const Size(double.infinity, 50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 ),
                 child: isLoading 
                   ? const CircularProgressIndicator(color: Colors.white)
