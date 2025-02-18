@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import '../models/patient_model.dart';
 
 class PatientService {
-  final String baseUrl = Constant.baseUrl + 'patients';
+  final String baseUrl = Constant.baseUrl + '/patients';
 
   Future<Map<String, dynamic>> createPatient(Map<String, dynamic> patientData) async {
     try {

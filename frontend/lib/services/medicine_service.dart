@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import '../models/medicine.dart';
 
 class MedicineService {
-  static const String baseUrl = Constant.baseUrl + 'medicines';
+  static const String baseUrl = Constant.baseUrl + '/medicines';
 
   Future<List<Medicine>> getMedicines() async {
     try {
