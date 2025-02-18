@@ -82,7 +82,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                       width: MediaQuery.of(context).size.width * 0.8,
                       height: MediaQuery.of(context).size.height * 0.3,
                       child: Image(
-                        image: const AssetImage('assets/logingraphics.jpg'),
+                        image: const AssetImage('assets/logingraphics.png'),
                         fit: BoxFit.contain,
                       ),
                     ),
