@@ -15,6 +15,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
+  final Color primaryColor = const Color(0xFF007BFF); // Blue Theme
 
   void _openEmergencyChat(BuildContext context) {
     Navigator.push(
@@ -57,15 +58,15 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        elevation: 0,
+        elevation: 2,
         title: Row(
           children: [
             CircleAvatar(
-              backgroundColor: const Color(0xFF4CAF50).withOpacity(0.2),
+              backgroundColor: primaryColor.withOpacity(0.2),
               child: Text(
                 userName[0].toUpperCase(),
-                style: const TextStyle(
-                  color: Color(0xFF4CAF50),
+                style: TextStyle(
+                  color: primaryColor,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -95,10 +96,8 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.notifications_outlined, color: Colors.black),
-            onPressed: () {
-              // Handle notifications
-            },
+            icon: Icon(Icons.notifications_outlined, color: primaryColor),
+            onPressed: () {},
           ),
         ],
       ),
@@ -125,11 +124,12 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
-        bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: const Color(0xFF4CAF50),
+        selectedItemColor: primaryColor,
+        unselectedItemColor: Colors.grey[500],
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -158,8 +158,8 @@ class _HomeScreenState extends State<HomeScreen> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: Container(
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Color(0xFFFF6B6B), Color(0xFFFF4646)],
+          gradient: LinearGradient(
+            colors: [primaryColor.withOpacity(0.9), primaryColor],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -207,23 +207,17 @@ class _HomeScreenState extends State<HomeScreen> {
             _buildActionButton(
               icon: Icons.medical_services,
               label: 'Appointments',
-              onTap: () {
-                // Handle appointments
-              },
+              onTap: () {},
             ),
             _buildActionButton(
               icon: Icons.description,
               label: 'Prescriptions',
-              onTap: () {
-                // Handle prescriptions
-              },
+              onTap: () {},
             ),
             _buildActionButton(
               icon: Icons.local_hospital,
               label: 'Find Doctor',
-              onTap: () {
-                // Handle find doctor
-              },
+              onTap: () {},
             ),
           ],
         ),
@@ -243,12 +237,12 @@ class _HomeScreenState extends State<HomeScreen> {
           Container(
             padding: const EdgeInsets.all(15),
             decoration: BoxDecoration(
-              color: const Color(0xFF4CAF50).withOpacity(0.1),
+              color: primaryColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
               icon,
-              color: const Color(0xFF4CAF50),
+              color: primaryColor,
               size: 30,
             ),
           ),
@@ -280,15 +274,15 @@ class _HomeScreenState extends State<HomeScreen> {
         Card(
           elevation: 2,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          child: const ListTile(
-            contentPadding: EdgeInsets.all(15),
+          child: ListTile(
+            contentPadding: const EdgeInsets.all(15),
             leading: CircleAvatar(
-              backgroundColor: Color(0xFF4CAF50),
-              child: Icon(Icons.calendar_today, color: Colors.white),
+              backgroundColor: primaryColor,
+              child: const Icon(Icons.calendar_today, color: Colors.white),
             ),
-            title: Text('Dr. Sarah Johnson'),
-            subtitle: Text('Tomorrow, 10:00 AM'),
-            trailing: Icon(Icons.arrow_forward_ios, size: 16),
+            title: const Text('Dr. Sarah Johnson'),
+            subtitle: const Text('Tomorrow, 10:00 AM'),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
           ),
         ),
       ],
