@@ -8,13 +8,14 @@ import 'screen/login_screen.dart';
 import 'screen/forget_password_screen.dart';
 import 'screen/signup_screen.dart';
 import 'screen/medicine_tracking_screen.dart';
+import 'screen/profile_screen.dart';
 
 void main() {
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthService()),
-         // Added Provider for authentication
+        // Added Provider for authentication
       ],
       child: const DoctApp(),
     ),
@@ -41,8 +42,9 @@ class DoctApp extends StatelessWidget {
         '/patient-history': (context) => const PatientHistoryScreen(),
         '/signup': (context) => const SignupScreen(),
         '/forgot-password': (context) => const ForgotPasswordScreen(),
-        '/medicine-tracking': (context) => const MedicineTrackingScreen(), 
-},
+        '/medicine-tracking': (context) => const MedicineTrackingScreen(),
+        '/profile': (context) => const ProfileScreen(),
+      },
     );
   }
 }
